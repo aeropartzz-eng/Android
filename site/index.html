@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Digital Operator Platform — A21s</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #0f141b; color: #e6ebf2; display: flex; min-height: 100vh; }
+aside { width: 230px; background: #151c26; border-right: 1px solid #26303f; padding: 20px 0; flex-shrink: 0; }
+aside h1 { font-size: 17px; padding: 0 20px 4px; color: #fff; }
+aside p.sub { font-size: 12px; color: #8fa1b5; padding: 0 20px 18px; }
+aside nav button { display: block; width: 100%; text-align: left; background: none; border: none; color: #b8c4d4; padding: 11px 20px; font-size: 14px; cursor: pointer; border-left: 3px solid transparent; }
+aside nav button:hover { background: #1c2634; color: #fff; }
+aside nav button.active { background: #1c2634; color: #fff; border-left-color: #2f81f7; }
+aside .foot { padding: 18px 20px; font-size: 11px; color: #6b7d92; line-height: 1.5; }
+main { flex: 1; padding: 24px 28px; max-width: 980px; }
+.banner { background: #3a2b07; border: 1px solid #8a6d1a; color: #f5d67a; padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; }
+h2 { font-size: 22px; margin-bottom: 6px; }
+p.lead { color: #8fa1b5; font-size: 14px; margin-bottom: 20px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 22px; }
+.card { background: #182130; border: 1px solid #26303f; border-radius: 10px; padding: 16px; }
+.card h3 { font-size: 13px; color: #8fa1b5; font-weight: 600; margin-bottom: 6px; }
+.card .big { font-size: 26px; font-weight: 700; }
+.card p { font-size: 13px; color: #b8c4d4; margin-top: 4px; line-height: 1.5; }
+.badge { display: inline-block; font-size: 12px; padding: 3px 9px; border-radius: 20px; font-weight: 600; }
+.b-aguardando { background: #3a2b07; color: #f5d67a; }
+.b-ativo { background: #0d3b22; color: #4ade80; }
+.b-planejado { background: #26303f; color: #8fa1b5; }
+.b-pendente { background: #3a2b07; color: #f5d67a; }
+.b-aprovado { background: #0d3b22; color: #4ade80; }
+.b-rejeitado { background: #3d1520; color: #f87171; }
+section.screen { display: none; }
+section.screen.active { display: block; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+input[type=text], input[type=url], input[type=number], select { background: #0f141b; border: 1px solid #33404f; color: #e6ebf2; border-radius: 7px; padding: 9px 11px; font-size: 14px; }
+input[type=text] { flex: 1; min-width: 200px; }
+button.btn { background: #2f81f7; color: #fff; border: none; border-radius: 7px; padding: 9px 16px; font-size: 14px; cursor: pointer; }
+button.btn:hover { background: #1f6feb; }
+button.ghost { background: none; border: 1px solid #33404f; color: #b8c4d4; border-radius: 7px; padding: 8px 13px; font-size: 13px; cursor: pointer; }
+button.ghost:hover { border-color: #2f81f7; color: #fff; }
+button.ok { background: #0d3b22; color: #4ade80; border: none; border-radius: 7px; padding: 7px 12px; cursor: pointer; font-size: 13px; }
+button.no { background: #3d1520; color: #f87171; border: none; border-radius: 7px; padding: 7px 12px; cursor: pointer; font-size: 13px; }
+.list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.item { background: #182130; border: 1px solid #26303f; border-radius: 10px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
+.item .t { font-size: 15px; font-weight: 600; }
+.item .d { font-size: 13px; color: #8fa1b5; margin-top: 3px; line-height: 1.5; }
+.item .acts { display: flex; gap: 8px; flex-shrink: 0; }
+.done { text-decoration: line-through; color: #6b7d92 !important; }
+label.check { display: flex; gap: 10px; align-items: flex-start; background: #182130; border: 1px solid #26303f; border-radius: 10px; padding: 13px 15px; font-size: 14px; cursor: pointer; }
+label.check input { margin-top: 2px; }
+.form-grid { display: grid; gap: 12px; max-width: 520px; }
+.form-grid label { font-size: 13px; color: #8fa1b5; display: grid; gap: 5px; }
+.empty { color: #8fa1b5; font-size: 14px; background: #182130; border: 1px dashed #33404f; border-radius: 10px; padding: 18px; margin-top: 14px; line-height: 1.6; }
+.muted { color: #6b7d92; font-size: 13px; }
+@media (max-width: 700px) { body { flex-direction: column; } aside { width: 100%; } main { padding: 16px; } }
+</style>
+</head>
+<body>
+<aside>
+  <h1>AI Digital Operator</h1>
+  <p class="sub">Painel do Galaxy A21s — AeroPartz</p>
+  <nav id="nav"></nav>
+  <div class="foot">Frente: Luna<br>Dispositivo: Galaxy A21s<br>Status: aguardando conexão</div>
+</aside>
+<main>
+  <div class="banner">⚠️ A21s aguardando conexão — SSH/ADB ainda não configurado. O painel funciona, mas nenhum atendimento real roda até o aparelho conectar.</div>
+  <section class="screen" id="screen-visao">
+    <h2>Visão geral</h2>
+    <p class="lead">O painel de operação do A21s em um só lugar.</p>
+    <div class="cards" id="dash-cards"></div>
+    <div class="card">
+      <h3>Dispositivo</h3>
+      <div class="row"><span class="big" style="font-size:19px">Galaxy A21s — Android da loja</span><span class="badge b-aguardando">aguardando conexão</span></div>
+      <p>ROM limpa planejada; acesso SSH/ADB ainda não entregue. O telefone é o passo final da implantação.</p>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>Atividade recente</h3>
+      <div id="dash-activity"></div>
+    </div>
+  </section>
+  <section class="screen" id="screen-agentes">
+    <h2>Agentes</h2>
+    <p class="lead">Os agentes de IA que operam o aparelho. Ação sensível sempre pede aprovação humana.</p>
+    <div class="row" style="margin-bottom:6px">
+      <select id="agent-filter" onchange="renderAgents()">
+        <option value="todos">Todos os status</option>
+        <option value="ativo">Ativos</option>
+        <option value="planejado">Planejados</option>
+      </select>
+    </div>
+    <div class="list" id="agent-list"></div>
+  </section>
+  <section class="screen" id="screen-tarefas">
+    <h2>Tarefas</h2>
+    <p class="lead">O que falta fazer para o A21s entrar em operação.</p>
+    <div class="row">
+      <input type="text" id="new-task" placeholder="Nova tarefa..." onkeydown="if(event.key==='Enter')addTask()">
+      <button class="btn" onclick="addTask()">Adicionar</button>
+    </div>
+    <div class="list" id="task-list"></div>
+  </section>
+  <section class="screen" id="screen-aprovacoes">
+    <h2>Aprovações</h2>
+    <p class="lead">Ações sensíveis aguardando um humano aprovar. Nada sensível é executado sem aprovação.</p>
+    <div class="row" style="margin-bottom:6px">
+      <select id="approval-filter" onchange="renderApprovals()">
+        <option value="todos">Todas</option>
+        <option value="pendente">Pendentes</option>
+        <option value="aprovado">Aprovadas</option>
+        <option value="rejeitado">Rejeitadas</option>
+      </select>
+    </div>
+    <div class="list" id="approval-list"></div>
+  </section>
+  <section class="screen" id="screen-conversas">
+    <h2>Conversas</h2>
+    <p class="lead">Conversas do WhatsApp e do Messenger operadas pelo painel.</p>
+    <div class="list" id="conv-list"></div>
+  </section>
+  <section class="screen" id="screen-dispositivos">
+    <h2>Dispositivos</h2>
+    <p class="lead">Aparelhos ligados ao painel.</p>
+    <div class="card">
+      <h3>Galaxy A21s — Android da loja</h3>
+      <div class="row"><span class="badge b-aguardando">aguardando conexão</span><span class="muted">SSH/ADB não configurado</span></div>
+      <p>ROM limpa planejada; acesso SSH/ADB ainda não entregue.</p>
+    </div>
+    <h3 style="margin:20px 0 10px;font-size:16px">Preparação do aparelho dedicado</h3>
+    <div class="list" id="checklist"></div>
+  </section>
+  <section class="screen" id="screen-atividade">
+    <h2>Atividade</h2>
+    <p class="lead">Registro de tudo que aconteceu no painel.</p>
+    <div class="row"><button class="btn" onclick="exportCSV()">Exportar CSV</button></div>
+    <div class="list" id="activity-list"></div>
+  </section>
+  <section class="screen" id="screen-config">
+    <h2>Configurações</h2>
+    <p class="lead">Regras de atendimento e conexões do painel.</p>
+    <div class="form-grid">
+      <label>Janela de resposta (minutos) — tempo do Will responder antes da IA assumir
+        <input type="number" id="cfg-reply" min="1" max="30">
+      </label>
+      <label>Intervalo de checagem (minutos)
+        <input type="number" id="cfg-check" min="1" max="120">
+      </label>
+      <label>Checagem intensiva — janela (minutos) após atividade nova
+        <input type="number" id="cfg-int-window" min="1" max="30">
+      </label>
+      <label>Checagem intensiva — intervalo (segundos)
+        <input type="number" id="cfg-int-interval" min="10" max="300">
+      </label>
+      <label>URL da API do backend
+        <input type="url" id="cfg-api" placeholder="https://...">
+      </label>
+      <label>URL do espelhamento ao vivo
+        <input type="url" id="cfg-mirror" placeholder="https://...">
+      </label>
+      <div><button class="btn" onclick="saveSettings()">Salvar configurações</button> <span id="cfg-saved" class="muted"></span></div>
+    </div>
+  </section>
+</main>
+<script>
+const KEY = 'a21s-panel-v1';
+const SCREENS = [
+  ['visao', 'Visão geral'],
+  ['agentes', 'Agentes'],
+  ['tarefas', 'Tarefas'],
+  ['aprovacoes', 'Aprovações'],
+  ['conversas', 'Conversas'],
+  ['dispositivos', 'Dispositivos'],
+  ['atividade', 'Atividade'],
+  ['config', 'Configurações']
+];
+function seed() {
+  return {
+    agents: [
+      { id: 'whatsapp', name: 'WhatsApp', desc: 'Atendimento da loja — responde se o Will não responder em 3 min.', status: 'ativo' },
+      { id: 'messenger', name: 'Messenger', desc: 'Marketplace / Facebook — respostas no estilo do Will.', status: 'ativo' },
+      { id: 'youtube', name: 'YouTube', desc: 'Planejado — Fase 7.', status: 'planejado' },
+      { id: 'jogos', name: 'Jogos', desc: 'Planejado — Fase 7.', status: 'planejado' }
+    ],
+    tasks: [
+      { id: 1, title: 'Conectar o A21s via SSH/ADB', done: false },
+      { id: 2, title: 'Confirmar modelo e firmware do A21s', done: false },
+      { id: 3, title: 'Configurar o WhatsApp da loja no aparelho', done: false },
+      { id: 4, title: 'Testar atendimento com aprovação humana', done: false }
+    ],
+    approvals: [
+      { id: 1, title: 'Responder comprador no Messenger', detail: 'R8 Preto/Vermelho — confirmar 58 e 60, R$ 159,99 à vista.', status: 'pendente' }
+    ],
+    conversations: [],
+    checklist: [
+      { label: 'Backup do aparelho e dos dados', done: false },
+      { label: 'Deixar carregando e confirmar modelo/firmware', done: false },
+      { label: 'Ativar opções de desenvolvedor e depuração USB', done: false },
+      { label: 'Testar ADB e acesso SSH', done: false },
+      { label: 'Entregar o acesso SSH/ADB para a Luna', done: false }
+    ],
+    activity: [
+      { time: '2026-11-14 00:20', text: 'Frente do Android passou para a Luna.' },
+      { time: '2026-11-13 23:31', text: 'Cronograma do A21s entregue na sala do Zero.' },
+      { time: '2026-11-13', text: 'Painel criado (8 telas) — A21s aguardando conexão.' }
+    ],
+    settings: { replyWindow: 3, checkInterval: 30, intWindow: 5, intInterval: 60, apiUrl: '', mirrorUrl: '' }
+  };
+}
+let state = load();
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return seed();
+}
+function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+function log(text) {
+  const d = new Date();
+  const t = d.toISOString().slice(0, 16).replace('T', ' ');
+  state.activity.unshift({ time: t, text });
+  save();
+}
+function nav() {
+  document.getElementById('nav').innerHTML = SCREENS.map(([id, label]) =>
+    '<button data-screen="' + id + '" onclick="show(\'' + id + '\')">' + label + '</button>').join('');
+}
+function show(id) {
+  document.querySelectorAll('section.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.screen === id));
+  if (id === 'visao') renderDash();
+  if (id === 'agentes') renderAgents();
+  if (id === 'tarefas') renderTasks();
+  if (id === 'aprovacoes') renderApprovals();
+  if (id === 'conversas') renderConvs();
+  if (id === 'dispositivos') renderChecklist();
+  if (id === 'atividade') renderActivity();
+  if (id === 'config') renderSettings();
+}
+function badge(status) {
+  const map = { ativo: 'b-ativo', planejado: 'b-planejado', pendente: 'b-pendente', aprovado: 'b-aprovado', rejeitado: 'b-rejeitado' };
+  return '<span class="badge ' + (map[status] || 'b-planejado') + '">' + status + '</span>';
+}
+function renderDash() {
+  const pendingTasks = state.tasks.filter(t => !t.done).length;
+  const pendingAppr = state.approvals.filter(a => a.status === 'pendente').length;
+  const activeAgents = state.agents.filter(a => a.status === 'ativo').length;
+  document.getElementById('dash-cards').innerHTML =
+    '<div class="card"><h3>Dispositivo</h3><div class="big" style="font-size:19px">A21s</div><p><span class="badge b-aguardando">aguardando conexão</span></p></div>' +
+    '<div class="card"><h3>Agentes ativos</h3><div class="big">' + activeAgents + ' / ' + state.agents.length + '</div><p>WhatsApp e Messenger ativos; YouTube e Jogos planejados.</p></div>' +
+    '<div class="card"><h3>Tarefas pendentes</h3><div class="big">' + pendingTasks + '</div><p>Para o A21s entrar em operação.</p></div>' +
+    '<div class="card"><h3>Aprovações pendentes</h3><div class="big">' + pendingAppr + '</div><p>Ações sensíveis aguardando humano.</p></div>';
+  document.getElementById('dash-activity').innerHTML = state.activity.slice(0, 5).map(a =>
+    '<div style="padding:8px 0;border-top:1px solid #26303f;font-size:14px"><span class="muted">' + a.time + '</span> — ' + a.text + '</div>').join('');
+}
+function renderAgents() {
+  const f = document.getElementById('agent-filter').value;
+  const list = state.agents.filter(a => f === 'todos' || a.status === f);
+  document.getElementById('agent-list').innerHTML = list.length ? list.map(a =>
+    '<div class="item"><div><div class="t">' + a.name + '</div><div class="d">' + a.desc + '</div></div><div class="acts">' + badge(a.status) + '</div></div>').join('')
+    : '<div class="empty">Nenhum agente com esse status.</div>';
+}
+function renderTasks() {
+  document.getElementById('task-list').innerHTML = state.tasks.length ? state.tasks.map(t =>
+    '<div class="item"><label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;flex:1">' +
+    '<input type="checkbox" ' + (t.done ? 'checked' : '') + ' onchange="toggleTask(' + t.id + ')">' +
+    '<span class="' + (t.done ? 'done' : '') + '" style="font-size:15px">' + t.title + '</span></label>' +
+    '<div class="acts"><button class="ghost" onclick="delTask(' + t.id + ')">Excluir</button></div></div>').join('')
+    : '<div class="empty">Nenhuma tarefa. Adicione uma acima.</div>';
+}
+function addTask() {
+  const inp = document.getElementById('new-task');
+  const v = inp.value.trim();
+  if (!v) return;
+  state.tasks.push({ id: Date.now(), title: v, done: false });
+  log('Tarefa criada: ' + v);
+  inp.value = '';
+  save(); renderTasks();
+}
+function toggleTask(id) {
+  const t = state.tasks.find(x => x.id === id);
+  if (t) { t.done = !t.done; log((t.done ? 'Tarefa concluída: ' : 'Tarefa reaberta: ') + t.title); save(); renderTasks(); }
+}
+function delTask(id) {
+  const t = state.tasks.find(x => x.id === id);
+  state.tasks = state.tasks.filter(x => x.id !== id);
+  if (t) log('Tarefa excluída: ' + t.title);
+  save(); renderTasks();
+}
+function renderApprovals() {
+  const f = document.getElementById('approval-filter').value;
+  const list = state.approvals.filter(a => f === 'todos' || a.status === f);
+  document.getElementById('approval-list').innerHTML = list.length ? list.map(a =>
+    '<div class="item"><div><div class="t">' + a.title + '</div><div class="d">' + a.detail + '</div></div><div class="acts">' + badge(a.status) +
+    (a.status === 'pendente'
+      ? ' <button class="ok" onclick="decideApproval(' + a.id + ', \'aprovado\')">Aprovar</button><button class="no" onclick="decideApproval(' + a.id + ', \'rejeitado\')">Rejeitar</button>'
+      : '') + '</div></div>').join('')
+    : '<div class="empty">Nenhuma aprovação com esse filtro.</div>';
+}
+function decideApproval(id, status) {
+  const a = state.approvals.find(x => x.id === id);
+  if (a) { a.status = status; log('Aprovação ' + status + ': ' + a.title); save(); renderApprovals(); }
+}
+function renderConvs() {
+  document.getElementById('conv-list').innerHTML = state.conversations.length ? state.conversations.map(c =>
+    '<div class="item"><div><div class="t">' + c.name + '</div><div class="d">' + c.text + '</div></div></div>').join('')
+    : '<div class="empty">Nenhuma conversa sincronizada ainda.<br>O A21s ainda não está conectado — as conversas do WhatsApp e do Messenger aparecem aqui quando o aparelho ligar ao painel.</div>';
+}
+function renderChecklist() {
+  document.getElementById('checklist').innerHTML = state.checklist.map((c, i) =>
+    '<label class="check"><input type="checkbox" ' + (c.done ? 'checked' : '') + ' onchange="toggleCheck(' + i + ')"><span class="' + (c.done ? 'done' : '') + '">' + c.label + '</span></label>').join('');
+}
+function toggleCheck(i) {
+  state.checklist[i].done = !state.checklist[i].done;
+  log((state.checklist[i].done ? 'Passo concluído: ' : 'Passo reaberto: ') + state.checklist[i].label);
+  save(); renderChecklist();
+}
+function renderActivity() {
+  document.getElementById('activity-list').innerHTML = state.activity.map(a =>
+    '<div class="item"><div><span class="muted">' + a.time + '</span><div class="d" style="color:#e6ebf2">' + a.text + '</div></div></div>').join('');
+}
+function exportCSV() {
+  const rows = [['data', 'evento']].concat(state.activity.map(a => [a.time, a.text.replace(/"/g, '""')]));
+  const csv = rows.map(r => r.map(v => '"' + v + '"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'atividade-a21s.csv';
+  a.click();
+  log('Atividade exportada em CSV.');
+}
+function renderSettings() {
+  const s = state.settings;
+  document.getElementById('cfg-reply').value = s.replyWindow;
+  document.getElementById('cfg-check').value = s.checkInterval;
+  document.getElementById('cfg-int-window').value = s.intWindow;
+  document.getElementById('cfg-int-interval').value = s.intInterval;
+  document.getElementById('cfg-api').value = s.apiUrl;
+  document.getElementById('cfg-mirror').value = s.mirrorUrl;
+}
+function saveSettings() {
+  state.settings = {
+    replyWindow: +document.getElementById('cfg-reply').value || 3,
+    checkInterval: +document.getElementById('cfg-check').value || 30,
+    intWindow: +document.getElementById('cfg-int-window').value || 5,
+    intInterval: +document.getElementById('cfg-int-interval').value || 60,
+    apiUrl: document.getElementById('cfg-api').value.trim(),
+    mirrorUrl: document.getElementById('cfg-mirror').value.trim()
+  };
+  save();
+  log('Configurações salvas (janela ' + state.settings.replyWindow + ' min, checagem ' + state.settings.checkInterval + ' min).');
+  document.getElementById('cfg-saved').textContent = 'Salvo.';
+  setTimeout(() => { document.getElementById('cfg-saved').textContent = ''; }, 2500);
+}
+nav();
+show('visao');
+</script>
+</body>
+</html>
